@@ -6,7 +6,7 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" >
 		<link rel="stylesheet" type="text/css" href="../static/css/simplegrid.css" />
-                <link rel="stylesheet" type="text/css" media='(min-width: 1024px)' href="../static/css/desktop-mhw.css?ref=v1" />
+                <link rel="stylesheet" type="text/css" media='(min-width: 1024px)' href="../static/css/desktop.css?ref=v1" />
                 <link rel="icon" href="../static/favicon.ico">
 		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 	</head>
@@ -26,10 +26,7 @@
                            family: 'Sans-Serif',
                            size: 16,            
                        },
-
 		    };
-
-   
                                      var graphs = {{fig | safe}};
                                      TESTER = document.getElementById('OSTIA')
 			             Plotly.newPlot(TESTER, graphs, {})
