@@ -20,6 +20,8 @@ def main():
 
     # Get path to NetCDF files in shared volume
     ncpath = config['ncpath']
+    if not os.path.isdir(ncpath):
+        os.mkdir(ncpath)
 
     # Get local database file name
     file = config['SST']; logger.info(f'{now()} Local database is {file}...')
