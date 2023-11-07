@@ -34,6 +34,17 @@ def main():
                 'Please make sure the NetCDF file is at the base directory '     + \
                 'during build time or it is already located at the shared volume.')
 
+    # Get climatology file name
+    climfile = config['climnc']; fullclimpath = ncpath + climfile
+
+    # Move climatology to shared volume if not moved yet
+    if os.path.isfile(climfile) and not os.path.isfile(fullclimpath):
+        shutil.move(climfile, fullclimpath)
+    if not os.path.isfile(fullclimpath):
+        raise FileNotFoundError(f'ERROR: Climatology file {climfile} not found! ' + \
+                'Please make sure the NetCDF file is at the base directory '     + \
+                'during build time or it is already located at the shared volume.')
+
     with Dataset(fullpath, 'r') as nc:
         series = num2date(nc.variables['time'], nc.variables['time'].units)
         # Get last index of historical time series
