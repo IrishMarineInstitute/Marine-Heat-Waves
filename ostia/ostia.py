@@ -1,4 +1,3 @@
-from netCDF4 import Dataset, num2date
 from datetime import date
 import copernicus
 
