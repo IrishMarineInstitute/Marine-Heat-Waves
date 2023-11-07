@@ -1,0 +1,71 @@
+.languages-portrait {
+  display: block;
+}
+
+.languages-tiny {
+  display: none;
+}
+
+.languages-landscape {
+  display: none;
+}
+
+.languages-tiny-landscape {
+  display: none;
+}
+
+.languages-desktop {
+  display: none;
+}
+
+.languages-ipad {
+  display: none;
+}
+
+.languages-folder {
+  display: none;
+}
+
+.intro {
+  text-align: justify;
+  font-size: 14px;
+  padding: 0px;
+  margin: 0px;    
+}
+
+.MarineObservatory {
+    text-align: center;
+    font-size: 10px;
+    font-family: sans-serif;
+    font-weight: normal;
+    transform: scale(1, 1.5);
+    -webkit-transform: scale(1, 1.5);
+    -moz-transform: scale(1, 1.5);
+    -o-transform: scale(1, 1.5);
+    transform-origin: 0% 20%; 
+    color: #605c5c;
+}
+
+.responsive {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+}
+
+.landscape {
+  height: 20px;
+  width: 40px;
+}
+
+.submit {
+    width: 250px;
+    font-size: 20px;
+    margin-top: 20px;
+    margin-left: 35px;
+    text-align: center;
+}
+
+#map {
+    width: 50%;
+    height: 100px;
+}
