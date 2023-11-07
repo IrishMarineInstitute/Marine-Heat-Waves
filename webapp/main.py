@@ -1,7 +1,4 @@
 ''' 
-    
-(C) Copyright EuroSea H2020 project under Grant No. 862626. All rights reserved.
-
  Copyright notice
    --------------------------------------------------------------------
    Copyright (C) 2022 Marine Institute
