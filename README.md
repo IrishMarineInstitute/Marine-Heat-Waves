@@ -5,7 +5,12 @@ The source of SST data is the **Operational Sea Surface Temperature and Ice Anal
 
 It is also possible to include in-situ measurements of seawater temperature from oceanographic moorings. This application also includes in-situ observations from the **Irish Marine Data Buoy Observation Network (IMDBON)** and the Mace Head buoy deployed under the framework of the **Interreg COMPASS** project. The in-situ data is accessed from the **Marine Institute ERDDAP Server** (https://erddap.marine.ie). 
 
-The instructions below provide details on how to deploy this application for your area of interest.
+The instructions below provide details on how to deploy this application for your area of interest. First, clone this repository into you local filesystem with:
+
+```
+git clone https://github.com/IrishMarineInstitute/Marine-Heat-Waves.git
+cd Marine-Heat-Waves
+```
 
 ## Structure
 The code is structured in five containerized applications that communicate to each other through a Docker volume. These containers are: **ostia**, **hobday**, **erddap**, **sst** and **webapp**. This last container (**webapp**) produces the front-end part of the application, while the other containers run the back-end part of the application:
@@ -28,7 +33,8 @@ Different tools are provided to help to build this dataset. A miniature example 
 To start downloading the dataset from the Copernicus Marine Service, run the **download.sh** script at the root directory, by providing your Copernicus Marine Service username and password, together with the local directory you wish to have the files downloaded to, as follows:
 
 ```
-$ bash ./download.sh {USERNAME} {PASSWORD} {FOLDER}
+chmod +x download.sh
+bash ./download.sh {USERNAME} {PASSWORD} {FOLDER}
 ```
 
 This will result in a large collection of daily, *global-coverage* files starting from 1982-01-01 and split into two datasets: reprocessing (REP) and near-real-time (NRT), as they are delivered in the Copernicus Marine Service.
@@ -36,7 +42,8 @@ This will result in a large collection of daily, *global-coverage* files startin
 Next, extract your area of interest from the global files using the script **crop.sh** as follows:
 
 ```
-$ bash ./crop.sh {FOLDER} {WEST} {EAST} {SOUTH} {NORTH}
+chmod +x crop.sh
+bash ./crop.sh {FOLDER} {WEST} {EAST} {SOUTH} {NORTH}
 ```
 
 where {FOLDER} is the local directory where the global SST files have been downloaded in the previous step, and {WEST}, {EAST}, {SOUTH} and {NORTH} are your area of interest boundaries, expressed as longitude and latitude coordinates. Again, this will result in a large collection of daily files, but limited to your area of interest only.
@@ -48,9 +55,47 @@ The next step is to aggregate these cropped files into a single, multi-year NetC
 files = './OSTIA/*.nc'
 ```
 
-to refer to the path of your files. Run the script and an **OSTIA-UNLIMITED.nc** file will be produced. Move this file to the **ostia** container before building the image.
+to refer to the path of your files. Run the script and an **OSTIA-UNLIMITED.nc** file will be produced. Move this file to the **ostia** container.
+
+```
+python merge.py
+```
 
   2. The second pre-processing step consists of creating the Docker volume to communicate the containers.
+
+```
+docker volume create shared-data
+```
+
+## Deploying the containers
+Use the instructions below to deploy the containers:
+
+### ostia
+This container maintains and updates a local, multi-year dataset of SST. Every day, it downloads and appends a new SST layer to the local dataset. Move to the *ostia* directory.
+
+```
+cd ostia
+```
+
+Make sure that this directory contains two important NetCDF datasets: (a) the local SST dataset **OSTIA-UNLIMITED.nc** generated above, and (b) the climatology **OSTIA-Climatology.nc** provided with this repository for the Irish EEZ. For an application in a different part of the world, a similar climatology file must be produced, containing the mean SST values for each day of the year, together with the 10th and 90th percentiles used for cold spell and marine heat wave detection, respectively. The procedures available at https://github.com/ecjoliver/marineHeatWaves are recommended to create the climatology file.
+
+In the ```config``` file, enter your application parameters. In particular, enter the geographical boundaries of your area of interest and your Copernicus Marine Service username and password.
+
+Then, build the image and run the container with the following instruction, linking to the shared Docker volume:
+
+```
+docker build -t ostia:latest .; docker run -d -v shared-data:/data --name ostia ostia:latest
+```
+
+
+
+### hobday
+
+### erddap
+
+### sst
+
+### webapp
 
 ## References
 Hobday, A. J., Alexander, L. V., Perkins, S. E., Smale, D. A., Straub, S. C., Oliver, E. C., ... & Wernberg, T. (2016). A hierarchical approach to defining marine heatwaves. Progress in Oceanography, 141, 227-238.
