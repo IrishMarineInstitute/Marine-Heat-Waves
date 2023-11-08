@@ -13,7 +13,7 @@ cd Marine-Heat-Waves
 ```
 
 ## Structure
-The code is structured in five containerized applications that communicate to each other through a Docker volume. These containers are: **ostia**, **hobday**, **erddap**, **sst** and **webapp**. This last container (**webapp**) produces the front-end part of the application, while the other containers run the back-end part of the application:
+The code is structured in five containerized applications that communicate to each other through a Docker volume. These containers are: **ostia**, **hobday**, **erddap**, **sst** and **webapp**. This last container (**webapp**) produces the front-end part of the application, while the other containers run the back-end part of the application. Some of these containers can be regarded as optional: you may not need them for your specific application. For example, you may not be interested in marine heat waves, but just in the SST visualization. In this case, the **hobday** container is not needed. The rest of the application should work fine without it. Or you may not be interested in the in-situ observations, then you may ignore the **erddap** container. The minimal application would involve the **ostia** and **webapp** containers.
 
   1. **ostia**: This container maintains and updates a local, multi-year dataset of SST. Every day, it downloads and appends a new SST layer to the local dataset.
   2. **hobday**: This container reads this local SST dataset and applies the **mhw-detect** algorithms (Hobday *et al.,* 2016) to determine the occurrence of marine heat waves and cold spells in the area.
@@ -87,11 +87,40 @@ Then, build the image and run the container with the following instruction, link
 docker build -t ostia:latest .; docker run -d -v shared-data:/data --name ostia ostia:latest
 ```
 
-
+This container will run periodically to ensure that the local dataset is updated every day. Enter the container file system with ```docker exec -it ostia bash```. You can check the container is working properly by inspecting the ```/log/app.log``` file. This also applies to the other containers (except **webapp**). Also, make sure that the dataset at ```/data/netcdf/OSTIA-UNLIMITED.nc``` is being updated.
 
 ### hobday
+This container uses the ```mhw-detect``` package to detect extreme events (marine heat waves and cold spells) in the SST dataset. It takes advantage of parallel processing for improved performance. As an example, processing the Irish EEZ grid (400 x 240) takes 1 hour with 20 cores. Move to the *hobday* directory:
+
+```
+cd hobday
+```
+
+Here, check the ```config``` file. For parallel processing, the domain is divided into multiple tiles. The size of these tiles is defined by the parameters ```nb_lat``` and ```nb_lon```. Use values that are integer divisors of the size of your grid. Try different values depending on your system. A partition of 20 x 12 tiles has proved to work for the Irish EEZ. More information can be found at https://pypi.org/project/mhw-detect
+
+Build the image and run the container with the following instruction:
+
+```
+docker build -t hobday:latest .; docker run -d -v shared-data:/data --name hobday hobday:latest
+```
+
+This container will run once a day to perform extreme event detection on the updated dataset. You can check the container is working fine by inspecting the ```/log/app.log``` file. Also, new files should have been created: ```/data/mhw.nc``` for marine heat waves and  ```/data/cs.nc``` for cold spells.
 
 ### erddap
+This container accesses and processes in-situ seawater temperature measurements from the Marine Institute ERDDAP. There is no need for configuration here. Just move to the *erddap* directory:
+
+```
+cd erddap
+```
+
+And run the container with the following instruction:
+
+```
+docker build -t erddap:latest .; docker run -d -v shared-data:/data --name erddap erddap:latest
+```
+
+You can check the container is working properly by inspecting the ```/log/app.log``` file. Also, new NetCDF files will have been created at ```/data/netcdf```. These are ```M2.nc```, ```M3.nc```, ```M4.nc```, ```M5.nc```, ```M6.nc``` and ```Mace-Head.nc```.
+
 
 ### sst
 
