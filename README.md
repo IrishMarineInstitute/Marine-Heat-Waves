@@ -23,13 +23,34 @@ Before deploying the containers, two pre-processing steps are required:
 
   1. First, the SST dataset must be downloaded, ideally to the latest date available. The **ostia** container has been designed to update the local dataset to the current date, but it is not expected to initialize the dataset from scratch or to update the dataset several years at once.
 
-Different tools are provided to help to build this dataset. A miniature example of how this dataset should like is provided under the **ostia** container. This file is **OSTIA-UNLIMITED.nc**. It consists of a NetCDF file with an unlimited time dimension, so that new daily layers can be later appended. 
+Different tools are provided to help to build this dataset. A miniature example of how this dataset should like is provided under the **ostia** container. This file is **OSTIA-UNLIMITED.nc**. It consists of a NetCDF file with an unlimited time dimension, so that new daily layers can be later appended. This miniature example only contains the month of January of 1982.
 
-To start downloading the dataset from the Copernicus Marine Service, run the **download.sh** script at the root directory, by providing your Copernicus Marine Service username and password, together with the local directry you wish to have the files downloaded to, as follows:
+To start downloading the dataset from the Copernicus Marine Service, run the **download.sh** script at the root directory, by providing your Copernicus Marine Service username and password, together with the local directory you wish to have the files downloaded to, as follows:
 
 ```
 $ bash ./download.sh {USERNAME} {PASSWORD} {FOLDER}
 ```
+
+This will result in a large collection of daily, *global-coverage* files starting from 1982-01-01 and split into two datasets: reprocessing (REP) and near-real-time (NRT), as they are delivered in the Copernicus Marine Service.
+
+Next, extract your area of interest from the global files using the script **crop.sh** as follows:
+
+```
+$ bash ./crop.sh {FOLDER} {WEST} {EAST} {SOUTH} {NORTH}
+```
+
+where {FOLDER} is the local directory where the global SST files have been downloaded in the previous step, and {WEST}, {EAST}, {SOUTH} and {NORTH} are your area of interest boundaries, expressed as longitude and latitude coordinates. Again, this will result in a large collection of daily files, but limited to your area of interest only.
+
+The next step is to aggregate these cropped files into a single, multi-year NetCDF file. This is achieved with the script **merge.py**. Note that netCDF and numpy are required to run this Python script, as detailed in **requirements.txt**. To run **merge.py**, move the cropped, daily files to a separate folder, *making sure that the files do not overlap in time*. Unfortunately, the Copernicus Marine Service REP and NRT datasets do overlap in time, so you will have to be careful to move the right files to a separate folder, making sure that there is one, and only one file per day. Modify the following code in **merge.py**:
+
+```
+# Path of the SST files downloaded (and cropped) from the Copernicus Marine Service. Change as required.
+files = './OSTIA/*.nc'
+```
+
+to refer to the path of your files. Run the script and an **OSTIA-UNLIMITED.nc** file will be produced. Move this file to the **ostia** container before building the image.
+
+  2. The second pre-processing step consists of creating the Docker volume to communicate the containers.
 
 ## References
 Hobday, A. J., Alexander, L. V., Perkins, S. E., Smale, D. A., Straub, S. C., Oliver, E. C., ... & Wernberg, T. (2016). A hierarchical approach to defining marine heatwaves. Progress in Oceanography, 141, 227-238.
