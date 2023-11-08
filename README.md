@@ -20,5 +20,5 @@ The code is structured in five containerized applications that communicate to ea
 ## References
 Hobday, A. J., Alexander, L. V., Perkins, S. E., Smale, D. A., Straub, S. C., Oliver, E. C., ... & Wernberg, T. (2016). A hierarchical approach to defining marine heatwaves. Progress in Oceanography, 141, 227-238.
 
-
+ 
 
