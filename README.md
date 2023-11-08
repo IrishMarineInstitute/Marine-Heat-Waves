@@ -16,6 +16,20 @@ The code is structured in five containerized applications that communicate to ea
   4. **sst**: In addition to the main workflow, which focuses on time-series analysis, this container produces 2-D maps of the sea surface tempeature, anomalies and marine heat waves occurring in the area of interest in the last two weeks.
   5. **webapp**: This container produces a web application to visualize data produced by the other containers.
 
+In addition, some scripts are provided at the root of the repository for the pre-processing steps. More details below.
+
+## Preparing the system
+Before deploying the containers, two pre-processing steps are required:
+
+  1. First, the SST dataset must be downloaded, ideally to the latest date available. The **ostia** container has been designed to update the local dataset to the current date, but it is not expected to initialize the dataset from scratch or to update the dataset several years at once.
+
+Different tools are provided to help to build this dataset. A miniature example of how this dataset should like is provided under the **ostia** container. This file is **OSTIA-UNLIMITED.nc**. It consists of a NetCDF file with an unlimited time dimension, so that new daily layers can be later appended. 
+
+To start downloading the dataset from the Copernicus Marine Service, run the **download.sh** script at the root directory, by providing your Copernicus Marine Service username and password, together with the local directry you wish to have the files downloaded to, as follows:
+
+```
+$ bash ./download.sh {USERNAME} {PASSWORD} {FOLDER}
+```
 
 ## References
 Hobday, A. J., Alexander, L. V., Perkins, S. E., Smale, D. A., Straub, S. C., Oliver, E. C., ... & Wernberg, T. (2016). A hierarchical approach to defining marine heatwaves. Progress in Oceanography, 141, 227-238.
