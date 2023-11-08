@@ -19,7 +19,7 @@ The code is structured in five containerized applications that communicate to ea
   2. **hobday**: This container reads this local SST dataset and applies the **mhw-detect** algorithms (Hobday *et al.,* 2016) to determine the occurrence of marine heat waves and cold spells in the area.
   3. **erddap**: This container accesses and processes in-situ seawater temperature measurements from the Marine Institute ERDDAP.
   4. **sst**: In addition to the main workflow, which focuses on time-series analysis, this container produces 2-D maps of the sea surface tempeature, anomalies and marine heat waves occurring in the area of interest in the last two weeks.
-  5. **webapp**: This container produces a web application to visualize data produced by the other containers.
+  5. **webapp**: This container produces a web application to visualize the data produced by the other containers.
 
 In addition, some scripts are provided at the root of the repository for the pre-processing steps. More details below.
 
@@ -123,11 +123,53 @@ You can check the container is working properly by inspecting the ```/log/app.lo
 
 
 ### sst
+This container produces 2-D maps of the sea surface tempeature, anomalies and marine heat waves occurring in the area of interest in the last two weeks. Move to the *sst* directory
 
+```
+cd sst
+```
+
+And edit the ```config``` file for your application. In particular, enter the geographical boundaries of your area of interest and your Copernicus Marine Service username and password. This container also includes a coastline file and a bathymetry file to draw the coastline and the 500-meter contour on the map. Similar files will have to be produced for your specific application.
+
+Run the container with the following instruction:
+
+```
+docker build -t sst:latest .; docker run -d -v shared-data:/data --name sst sst:latest
+```
+
+You can check the container is working properly by inspecting the ```/log/app.log``` file. Also, new pickle files will have been created at ```/data```. These are ```SST.pkl```, ```ANM.pkl``` and ```MHW.pkl```. These files contain the 2-D contour figures to be displayed on the website.
+ 
 ### webapp
+This container produces a web application to visualize the data produced by the other containers. Move to the *webapp* directory
+
+```
+cd webapp
+```
+
+You may now edit the ```config``` file for your application. In particular, the ```min_y``` and ```max_y``` parameters control the y-axis range in the SST figure.   You may need to edit ```views.py``` to ensure that the map focuses on your area of interest. The application is launched with:
+
+```
+docker build -t webapp:latest .; docker run -d --restart=on-failure --name=webapp -p 80:80 -v {path}/Marine-Heat-Waves/webapp:/app -v shared-data:/data webapp:latest
+```
+
+Replacing {path} with the appropriate path in your file system, depending on where you have cloned this repository. If needed, the application can be debugged by uncommenting these lines in ```/webapp/app/__init__py```:
+
+```
+from werkzeug.debug import DebuggedApplication
+app.wsgi_app = DebuggedApplication(app.wsgi_app, True)
+```
+
+and by setting
+
+```
+app.debug = True
+```
+
+The application should be ready now and you should be able to access it in your browser by entering the IP of the server running the application, port 80. For example
+
+```
+http://10.0.5.77:80
+```
 
 ## References
 Hobday, A. J., Alexander, L. V., Perkins, S. E., Smale, D. A., Straub, S. C., Oliver, E. C., ... & Wernberg, T. (2016). A hierarchical approach to defining marine heatwaves. Progress in Oceanography, 141, 227-238.
-
- 
-
