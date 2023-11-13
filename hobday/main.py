@@ -4,6 +4,8 @@ from clean import clean
 from cut import cut
 
 def main():
+    # Clean NetCDF directory (remove partition files)
+    clean() 
     # Partition SST dataset for parallel processing
     cut('config')
     # Marine Heat Waves analysis
