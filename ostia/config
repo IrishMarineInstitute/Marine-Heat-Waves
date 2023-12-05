@@ -14,8 +14,8 @@ SST OSTIA-UNLIMITED.nc
 climnc OSTIA-Climatology.nc
 !
 ! CMEMS username and password
-USERNAME dpereiro1                      
-PASSWORD W2"e3r4t5                     
+USERNAME ********                      
+PASSWORD ********                     
 !
 ! Copernicus OSTIA service
 service-id SST_GLO_SST_L4_NRT_OBSERVATIONS_010_001-TDS
