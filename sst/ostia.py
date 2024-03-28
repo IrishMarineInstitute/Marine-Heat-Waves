@@ -1,7 +1,6 @@
 from datetime import date, timedelta
 from netCDF4 import Dataset, num2date
 from subset_sst import subset_sst
-from motu import motu
 from math import nan
 import copernicus
 import os
@@ -21,7 +20,7 @@ def OSTIA(config):
     s, n = float(config['s']), float(config['n'])
         
     # OSTIA associated product and service ID's
-    PRODUCT, SERVICE = config['product-id'], config['service-id']
+    copernicus_dataset = config['dataset-id']
 
     # Number of days back in time to download
     N = int(config['N'])
@@ -31,18 +30,21 @@ def OSTIA(config):
     if not os.path.isdir(path):
         os.makedirs(path)
 
-    # Set variable to download and mode to Near-Real-Time
-    var, mode = 'analysed_sst', 'nrt'
+    # Set variable to download
+    var = 'analysed_sst'
 
     # Date range to download  
     idate, edate = date.today() - timedelta(days=N+4), date.today()
 
     # File name to download 
     file = 'OSTIA-MHW.nc'
+    if os.path.isfile(path + file):
+        os.remove(path + file)
 
     # Download
-    copernicus.Copernicus_Marine_Service(USER, PSWD, PRODUCT, SERVICE,
-        path, file, w, e, s, n, idate, edate, var, mode)
+    copernicus.Copernicus_Marine_Service_Download(USER, PSWD, copernicus_dataset, 
+            path, file, w, e, s, n, idate.strftime('%Y-%m-%dT%H:%M:%S'), 
+            edate.strftime('%Y-%m-%dT%H:%M:%S'), var)
 
     subset_sst() # Subset from MHW file (N + 4 days) to new file (N days)
 
@@ -62,5 +64,3 @@ def OSTIA(config):
     sst = sst.filled(nan)
 
     return lon, lat, time, sst 
-    
-
