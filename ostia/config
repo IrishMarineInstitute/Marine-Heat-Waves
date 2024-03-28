@@ -1,24 +1,10 @@
-! Map boundaries
 w -24.975
 e -5
 s 46.025
 n 58  
-!
-! Path to NetCDF files in shared volume
 ncpath /data/netcdf/
-!
-! OSTIA SST dataset
 SST OSTIA-UNLIMITED.nc
-!
-! Climatology NetCDF file
 climnc OSTIA-Climatology.nc
-!
-! CMEMS username and password
-USERNAME ********                      
-PASSWORD ********                     
-!
-! Copernicus OSTIA service
-service-id SST_GLO_SST_L4_NRT_OBSERVATIONS_010_001-TDS
-!
-! Copernicus OSTIA product
-product-id METOFFICE-GLO-SST-L4-NRT-OBS-SST-V2
+USERNAME dpereiro1                      
+PASSWORD W2"e3r4t5                     
+dataset-id METOFFICE-GLO-SST-L4-NRT-OBS-SST-V2
