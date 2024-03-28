@@ -5,6 +5,6 @@ n 58
 ncpath /data/netcdf/
 SST OSTIA-UNLIMITED.nc
 climnc OSTIA-Climatology.nc
-USERNAME dpereiro1                      
-PASSWORD W2"e3r4t5                     
+USERNAME ********                      
+PASSWORD ********                     
 dataset-id METOFFICE-GLO-SST-L4-NRT-OBS-SST-V2
