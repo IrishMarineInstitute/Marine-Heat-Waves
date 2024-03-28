@@ -1,13 +1,17 @@
 from netCDF4 import Dataset
 
+from log import set_logger, now
+logger = set_logger()
+
 def subset_sst():
     ''' The file downloaded from Copernicus is for Marine Heat Wave analysis,
         and contains N + 4 days. Here, subset the NetCDF to show only N days
         of SST and SST anomaly. '''
     
+    logger.info(f'{now()} Reading OSTIA-MHW file...')
     with Dataset('/data/SST/OSTIA-MHW.nc', 'r') as nc:
         # Read coordinates
-        lon, lat = nc.variables['lon'][:], nc.variables['lat'][:]
+        lon, lat = nc.variables['longitude'][:], nc.variables['latitude'][:]
         # Read time
         time = nc.variables['time'][:]
         # Read SST
@@ -17,6 +21,7 @@ def subset_sst():
     time, SST = time[4::], SST[4::, :, :]
     
     # Create new NetCDF for SST and anomaly visualization
+    logger.info(f'{now()} Creating OSTIA file...')
     with Dataset('/data/SST/OSTIA.nc', 'w') as nc:
         
         ''' Create dimensions '''
