@@ -1,0 +1,5 @@
+mhw-detect
+pandas
+pyarrow
+netCDF4==1.5.7
+numpy

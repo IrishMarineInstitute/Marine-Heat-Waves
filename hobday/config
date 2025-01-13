@@ -1,0 +1,24 @@
+data:
+  data :
+    path : '/data/netcdf/OSTIA-UNLIMITED.nc'
+    var : 'analysed_sst'
+ 
+params:
+    depth : 0
+    climatologyPeriod : [1982, 2021] 
+    pctile : 90
+    windowHalfWidth : 5
+    smoothPercentile : True
+    smoothPercentileWidth : 31
+    minDuration : 5
+    joinAcrossGaps : True
+    maxGap : 2
+    maxPadLength: False
+    coldSpells : False
+    Ly : False
+
+cut:
+  nb_lat : 20
+  nb_lon : 20
+
+output_detection : '/data/'
